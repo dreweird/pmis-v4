@@ -48,7 +48,7 @@ const connection = mysql.createConnection({
     SELECT *, tbl_mfo.mfo_id FROM tbl_mfo left JOIN tbl_allotment 
     on tbl_mfo.mfo_id = tbl_allotment.mfo_id 
     LEFT JOIN tbl_object 
-    on tbl_allotment.object_id=tbl_object.object_id`, function (error, results, fields) {
+    on tbl_allotment.object_id=tbl_object.object_id`, function (error, results) {
         if (error) throw error;
         res.json(results); 
       });
@@ -65,6 +65,15 @@ const connection = mysql.createConnection({
             res.status(200).json("Successfully Object Added!")
         }
     })
+  })
 
+  app.get('/summaryObject', function(req, res){
+      connection.query(`  
+      SELECT a.object_id, b.name, b.type, b.header, SUM(budget) as budget, SUM(adjustment) as adj, SUM(jan) as jan, SUM(feb) as feb, SUM(mar) as mar, SUM(apr) as apr, SUM(may) as may, SUM(jun) as jun, SUM(jul) as jul, SUM(aug) as aug, SUM(sep) as sep, SUM(oct) as oct, SUM(nov) as nov, SUM(decm) as decm FROM tbl_allotment a LEFT JOIN tbl_object b ON a.object_id = b.object_id GROUP BY a.object_id
+      `, function(error, results){
+        if (error) throw error;
+        res.json(results);
+
+      })
   })
   //connection.end();

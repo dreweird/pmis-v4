@@ -19,6 +19,7 @@ export class Bed1Component implements OnInit {
   autoGroupColumnDef;
   components;
   rowSelection;
+  columnTypes;
 
   onGridReady(params) {
     this.gridApi = params.api;
@@ -40,6 +41,20 @@ export class Bed1Component implements OnInit {
       return dialogRef.afterClosed();
     }
   }
+
+  
+  currencyFormatter(params) {
+    let number = parseFloat(params.value);
+    if(params.value == undefined){return '';}
+    return (number).toLocaleString('en-us', {minimumFractionDigits: 2,maximumFractionDigits: 2});
+  }
+
+  percentageFormatter(params) {
+    let number = parseFloat(params.value)*100;
+    if(number == undefined|| isNaN(number)){return '';}
+    return (number).toLocaleString('en-us', {minimumFractionDigits: 2,maximumFractionDigits: 2});   
+  }
+
 
   constructor(private mfoService: MfoService, private dialog: MatDialog) {
     this.rowSelection = 'single';
@@ -96,24 +111,28 @@ export class Bed1Component implements OnInit {
 
       { headerName: 'Description', field: 'name', width: 150, pinned: 'left' },
       { headerName: 'UACS Object Code', field: 'object_id', width: 100 },
-      { headerName: 'Original Allotment', field: '', width: 100 },
-      { headerName: 'Adjustment', field: '', width: 100 },
+      { headerName: 'Original Allotment', field: 'budget', width: 100, 
+      aggFunc: "sum", valueFormatter: this.currencyFormatter, type: "numericColumn" },
+      { headerName: 'Adjustment', field: 'adjustment', width: 100, editable: true,
+      aggFunc: "sum", valueFormatter: this.currencyFormatter, type: "numericColumn" },
       {
         headerName: 'Adjusted Allotment',
         field: '',
         width: 100,
-        cellStyle: { color: 'white', 'background-color': '#b23c9a' }
+        cellStyle: { color: 'white', 'background-color': '#b23c9a' },
+        aggFunc: "sum",
+        valueGetter: "Number(data.budget) + Number(data.adjustment) ",
+        valueFormatter: this.currencyFormatter,
+        type: "valueColumn" 
       },
       {
         headerName: 'Jan',
         field: 'jan',
         width: 70,
-        editable: params => {
-          if (params.node.data) return true;
-          else return false;
-        },
+        editable: true,
+        valueFormatter: this.currencyFormatter,
+        type: "valueColumn",
         onCellValueChanged: function(event) {
-          // console.log(event);
           if (isNaN(+event.newValue)) {
             alert('Invalid entry...input numbers only');
             event.newValue = null;
@@ -121,54 +140,73 @@ export class Bed1Component implements OnInit {
           console.log(event.newValue);
         }
       },
-      { headerName: 'Feb', field: '', width: 70 },
-      { headerName: 'Mar', field: '', width: 70 },
+      { headerName: 'Feb', field: 'feb', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
+      { headerName: 'Mar', field: 'mar', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
       {
         headerName: 'Q1',
-        field: '',
         width: 70,
-        cellStyle: { color: 'white', 'background-color': '#5472d3' }
+        cellStyle: { color: 'white', 'background-color': '#5472d3' },
+        valueGetter: "Number(data.jan) + Number(data.feb) + Number(data.mar)",
+        valueFormatter: this.currencyFormatter,
+        type: "numericColumn"
       },
-      { headerName: 'Apr', field: '', width: 70 },
-      { headerName: 'May', field: '', width: 70 },
-      { headerName: 'Jun', field: '', width: 70 },
+      { headerName: 'Apr', field: 'apr', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
+      { headerName: 'May', field: 'may', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
+      { headerName: 'Jun', field: 'jun', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
       {
         headerName: 'Q2',
-        field: '',
         width: 70,
-        cellStyle: { color: 'white', 'background-color': '#5472d3' }
+        cellStyle: { color: 'white', 'background-color': '#5472d3' },
+        valueGetter: "Number(data.apr) + Number(data.may) + Number(data.jun)",
+        valueFormatter: this.currencyFormatter,
+        type: "numericColumn"
       },
-      { headerName: 'Jul', field: '', width: 70 },
-      { headerName: 'Aug', field: '', width: 70 },
-      { headerName: 'Sep', field: '', width: 70 },
+      { headerName: 'Jul', field: 'jul', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
+      { headerName: 'Aug', field: 'aug', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
+      { headerName: 'Sep', field: 'sep', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
       {
         headerName: 'Q3',
-        field: '',
         width: 70,
-        cellStyle: { color: 'white', 'background-color': '#5472d3' }
+        cellStyle: { color: 'white', 'background-color': '#5472d3' },
+        valueGetter: "Number(data.jul) + Number(data.aug) + Number(data.sep)",
+        valueFormatter: this.currencyFormatter,
+        type: "numericColumn"
       },
-      { headerName: 'Oct', field: '', width: 70 },
-      { headerName: 'Nov', field: '', width: 70 },
-      { headerName: 'Dec', field: '', width: 70 },
+      { headerName: 'Oct', field: 'oct', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
+      { headerName: 'Nov', field: 'nov', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
+      { headerName: 'Dec', field: 'decm', width: 70, editable: true,valueFormatter: this.currencyFormatter, type: "valueColumn" },
       {
         headerName: 'Q4',
-        field: '',
         width: 70,
-        cellStyle: { color: 'white', 'background-color': '#5472d3' }
+        cellStyle: { color: 'white', 'background-color': '#5472d3' },
+        valueGetter: "Number(data.oct) + Number(data.nov) + Number(data.decm)",
+        valueFormatter: this.currencyFormatter,
+        type: "numericColumn"
       },
       {
         headerName: 'Total Obligations',
-        field: '',
         width: 70,
-        cellStyle: { color: 'white', 'background-color': '#ef7109' }
+        cellStyle: { color: 'white', 'background-color': '#ef7109' },
+        valueGetter: "Number(data.jan) + Number(data.feb) + Number(data.mar) + Number(data.apr) + Number(data.may) + Number(data.jun) + Number(data.jul) + Number(data.aug) + Number(data.sep) + Number(data.oct) + Number(data.nov) + Number(data.decm)",
+        valueFormatter: this.currencyFormatter,
+        type: "totalColumn"
       },
       {
         headerName: 'Unobligated',
         field: '',
         width: 70,
-        cellStyle: { color: 'white', 'background-color': '#e83525' }
+        cellStyle: { color: 'white', 'background-color': '#e83525' },
+        valueGetter: "Number(data.budget) - (Number(data.jan) + Number(data.feb) + Number(data.mar) + Number(data.apr) + Number(data.may) + Number(data.jun) + Number(data.jul) + Number(data.aug) + Number(data.sep) + Number(data.oct) + Number(data.nov) + Number(data.decm))",
+        valueFormatter: this.currencyFormatter,
+        type: "totalColumn"
       },
-      { headerName: 'Fund Utilization', field: '', width: 70 }
+      { 
+        headerName: 'Fund Utilization',  width: 70,
+        valueGetter: "(Number(data.jan) + Number(data.feb) + Number(data.mar) + Number(data.apr) + Number(data.may) + Number(data.jun) + Number(data.jul) + Number(data.aug) + Number(data.sep) + Number(data.oct) + Number(data.nov) + Number(data.decm)) / (Number(data.budget) + Number(data.adjustment))",
+        valueFormatter: this.percentageFormatter,
+        type: "totalColumn",
+
+      }
     ];
     this.autoGroupColumnDef = {
       headerName: 'PAP',
@@ -179,6 +217,21 @@ export class Bed1Component implements OnInit {
       cellRendererParams: {
         suppressCount: true, // turn off the row count
         innerRenderer: 'simpleCellRenderer'
+      }
+    };
+    this.columnTypes = {
+      valueColumn: {
+        width: 100,
+        aggFunc: "sum",
+        valueParser: "Number(newValue)",
+        cellClass: "number-cell",
+        valueFormatter: this.currencyFormatter
+      },
+      totalColumn: {
+        aggFunc: "sum",
+        cellRenderer: "agAnimateShowChangeCellRenderer",
+        cellClass: "number-cell",
+        valueFormatter: this.currencyFormatter
       }
     };
     this.components = { simpleCellRenderer: getSimpleCellRenderer() };

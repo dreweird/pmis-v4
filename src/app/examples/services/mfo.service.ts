@@ -18,4 +18,9 @@ export class MfoService {
     const url = `${this.apiRoot}/addObject`;
     return this.http.post(url, { mfo_id, object_id });
   }
+
+  getSummaryObject(){
+    const url = `${this.apiRoot}/summaryObject`;
+    return this.http.get(url);
+  }
 }

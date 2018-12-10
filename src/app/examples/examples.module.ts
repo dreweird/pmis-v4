@@ -25,6 +25,7 @@ import { FormEffects } from './form/form.effects';
 import { AuthenticatedComponent } from './authenticated/authenticated.component';
 import { NotificationsComponent } from './notifications/components/notifications.component';
 import { Bed1Component } from './bed1/bed1.component';
+import { SummaryObjectComponent } from './bed1/summaryObject.component';
 import { Bed2Component } from './bed2/bed2.component';
 import { Bed3Component } from './bed3/bed3.component';
 import { AgGridModule } from 'ag-grid-angular/main';
@@ -65,7 +66,8 @@ import { AddObjectDialogComponent } from './bed1/addObject-dialog.component';
     Bed1Component,
     Bed2Component,
     Bed3Component,
-    AddObjectDialogComponent
+    AddObjectDialogComponent,
+    SummaryObjectComponent
   ],
   providers: [StockMarketService, MfoService],
   entryComponents: [AddObjectDialogComponent]
